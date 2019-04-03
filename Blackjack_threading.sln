@@ -1,0 +1,88 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.539
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blackjack_threading", "Blackjack_threading\Blackjack_threading.csproj", "{0D6F50BC-1DC6-4B05-A18F-CFFD72E0532F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F6B47128-3537-46B3-B90E-929E087FBDCA}"
+	ProjectSection(SolutionItems) = preProject
+		Blackjack_threading\Resources\10C.png = Blackjack_threading\Resources\10C.png
+		Blackjack_threading\Resources\10D.png = Blackjack_threading\Resources\10D.png
+		Blackjack_threading\Resources\10H.png = Blackjack_threading\Resources\10H.png
+		Blackjack_threading\Resources\10S.png = Blackjack_threading\Resources\10S.png
+		Blackjack_threading\Resources\2C.png = Blackjack_threading\Resources\2C.png
+		Blackjack_threading\Resources\2D.png = Blackjack_threading\Resources\2D.png
+		Blackjack_threading\Resources\2H.png = Blackjack_threading\Resources\2H.png
+		Blackjack_threading\Resources\2S.png = Blackjack_threading\Resources\2S.png
+		Blackjack_threading\Resources\3C.png = Blackjack_threading\Resources\3C.png
+		Blackjack_threading\Resources\3D.png = Blackjack_threading\Resources\3D.png
+		Blackjack_threading\Resources\3H.png = Blackjack_threading\Resources\3H.png
+		Blackjack_threading\Resources\3S.png = Blackjack_threading\Resources\3S.png
+		Blackjack_threading\Resources\4C.png = Blackjack_threading\Resources\4C.png
+		Blackjack_threading\Resources\4D.png = Blackjack_threading\Resources\4D.png
+		Blackjack_threading\Resources\4H.png = Blackjack_threading\Resources\4H.png
+		Blackjack_threading\Resources\4S.png = Blackjack_threading\Resources\4S.png
+		Blackjack_threading\Resources\5C.png = Blackjack_threading\Resources\5C.png
+		Blackjack_threading\Resources\5D.png = Blackjack_threading\Resources\5D.png
+		Blackjack_threading\Resources\5H.png = Blackjack_threading\Resources\5H.png
+		Blackjack_threading\Resources\5S.png = Blackjack_threading\Resources\5S.png
+		Blackjack_threading\Resources\6C.png = Blackjack_threading\Resources\6C.png
+		Blackjack_threading\Resources\6D.png = Blackjack_threading\Resources\6D.png
+		Blackjack_threading\Resources\6H.png = Blackjack_threading\Resources\6H.png
+		Blackjack_threading\Resources\6S.png = Blackjack_threading\Resources\6S.png
+		Blackjack_threading\Resources\7C.png = Blackjack_threading\Resources\7C.png
+		Blackjack_threading\Resources\7D.png = Blackjack_threading\Resources\7D.png
+		Blackjack_threading\Resources\7H.png = Blackjack_threading\Resources\7H.png
+		Blackjack_threading\Resources\7S.png = Blackjack_threading\Resources\7S.png
+		Blackjack_threading\Resources\8C.png = Blackjack_threading\Resources\8C.png
+		Blackjack_threading\Resources\8D.png = Blackjack_threading\Resources\8D.png
+		Blackjack_threading\Resources\8H.png = Blackjack_threading\Resources\8H.png
+		Blackjack_threading\Resources\8S.png = Blackjack_threading\Resources\8S.png
+		Blackjack_threading\Resources\9C.png = Blackjack_threading\Resources\9C.png
+		Blackjack_threading\Resources\9D.png = Blackjack_threading\Resources\9D.png
+		Blackjack_threading\Resources\9H.png = Blackjack_threading\Resources\9H.png
+		Blackjack_threading\Resources\9S.png = Blackjack_threading\Resources\9S.png
+		Blackjack_threading\Resources\AC.png = Blackjack_threading\Resources\AC.png
+		Blackjack_threading\Resources\AD.png = Blackjack_threading\Resources\AD.png
+		Blackjack_threading\Resources\AH.png = Blackjack_threading\Resources\AH.png
+		Blackjack_threading\Resources\AS.png = Blackjack_threading\Resources\AS.png
+		Blackjack_threading\Resources\bg.jpg = Blackjack_threading\Resources\bg.jpg
+		Blackjack_threading\Resources\blue_back.png = Blackjack_threading\Resources\blue_back.png
+		Blackjack_threading\Resources\gray_back.png = Blackjack_threading\Resources\gray_back.png
+		Blackjack_threading\Resources\green_back.png = Blackjack_threading\Resources\green_back.png
+		Blackjack_threading\Resources\JC.png = Blackjack_threading\Resources\JC.png
+		Blackjack_threading\Resources\JD.png = Blackjack_threading\Resources\JD.png
+		Blackjack_threading\Resources\JH.png = Blackjack_threading\Resources\JH.png
+		Blackjack_threading\Resources\JS.png = Blackjack_threading\Resources\JS.png
+		Blackjack_threading\Resources\KC.png = Blackjack_threading\Resources\KC.png
+		Blackjack_threading\Resources\KD.png = Blackjack_threading\Resources\KD.png
+		Blackjack_threading\Resources\KH.png = Blackjack_threading\Resources\KH.png
+		Blackjack_threading\Resources\KS.png = Blackjack_threading\Resources\KS.png
+		Blackjack_threading\Resources\purple_back.png = Blackjack_threading\Resources\purple_back.png
+		Blackjack_threading\Resources\QC.png = Blackjack_threading\Resources\QC.png
+		Blackjack_threading\Resources\QD.png = Blackjack_threading\Resources\QD.png
+		Blackjack_threading\Resources\QH.png = Blackjack_threading\Resources\QH.png
+		Blackjack_threading\Resources\QS.png = Blackjack_threading\Resources\QS.png
+		Blackjack_threading\Resources\red_back.png = Blackjack_threading\Resources\red_back.png
+		Blackjack_threading\Resources\yellow_back.png = Blackjack_threading\Resources\yellow_back.png
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0D6F50BC-1DC6-4B05-A18F-CFFD72E0532F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D6F50BC-1DC6-4B05-A18F-CFFD72E0532F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D6F50BC-1DC6-4B05-A18F-CFFD72E0532F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D6F50BC-1DC6-4B05-A18F-CFFD72E0532F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B5EE03F3-40B1-4683-B5EA-1B656EA175F8}
+	EndGlobalSection
+EndGlobal
