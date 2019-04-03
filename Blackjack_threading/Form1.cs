@@ -16,9 +16,10 @@ namespace Blackjack_threading
     public partial class Form1 : Form
     {
         // Create a player and a dealer instance
-        Player player1 = new Player() { Name = "Player 1" };
         Dealer dealer = new Dealer();
-
+        Player player1 = new Player() { Name = "Player 1" };
+        Player player2 = new Player() { Name = "Player 2" };
+        
         // Create new random
         Random random = new Random();
         
@@ -44,8 +45,8 @@ namespace Blackjack_threading
         private void dealButton_Click(object sender, EventArgs e)
         {
             dealButton.Enabled = false;
-            hitButton.Enabled = true;
-            standButton.Enabled = true;
+            hitButtonPlayer1.Enabled = true;
+            standButtonPlayer1.Enabled = true;
             if (player1.sumCards() > 0)
             {
                 resultLabel.Text = String.Format("Click Reset if you want to restart.");
@@ -56,7 +57,7 @@ namespace Blackjack_threading
                 // Deal dealer
                 DealDealer();
                 // Deal player
-                DealPlayer();
+                DealPlayers();
                 // check dealer cards for dead or Blackjack
                 if (dealer.sumCards() > 21)
                 {
@@ -86,13 +87,13 @@ namespace Blackjack_threading
             }
         }
 
-        // handles hit button click
+        // handles hit button click for player 1
         private void hitButton_Click(object sender, EventArgs e)
         {
             if (player1.sumCards() == 0)
             {
                 resultLabel.Text = "You need to deal first!";
-                displayCardBack(pictureBoxHit);
+                displayCardBack(pictureBoxPlayer1Hit);
             }
             // player sumcards is not 0, so continue
             else
@@ -114,7 +115,7 @@ namespace Blackjack_threading
                     if (usedCards.Contains(randomCard)) randomCard = selectRandomCard();
                     else randomCard = 1 * randomCard;
 
-                    pictureBoxHit.ImageLocation = card.Image;
+                    pictureBoxPlayer1Hit.ImageLocation = card.Image;
                     player1.cardList.Add(card);
                     if (player1.sumCards() > 21)
                     {
@@ -132,16 +133,22 @@ namespace Blackjack_threading
             }
         }
 
+        // handles hitbutton click for player 2
+        private void hitButtonPlayer2_Click(object sender, EventArgs e)
+        {
+            //
+        }
+
         // Handles stand button click
         private void standButton_Click(object sender, EventArgs e)
         {
-            hitButton.Enabled = false;
-            standButton.Enabled = false;
+            hitButtonPlayer1.Enabled = false;
+            standButtonPlayer1.Enabled = false;
             dealButton.Enabled = false;
             if (player1.sumCards() == 0)
             {
                 resultLabel.Text = "Click the Deal button...";
-                displayCardBack(pictureBoxHit);
+                displayCardBack(pictureBoxPlayer1Hit);
             }
             else
             {
@@ -184,6 +191,12 @@ namespace Blackjack_threading
             }
         }
 
+        // handles stand button for player 2
+        private void standButtonPlayer2_Click(object sender, EventArgs e)
+        {
+
+        }
+
         // handles reset button
         private void resetButton_Click(object sender, EventArgs e)
         {
@@ -194,17 +207,20 @@ namespace Blackjack_threading
         private void resetGame()
         {
             resultLabel.Text = null;
-            displayCardBack(pictureBoxPlayerHand1);
-            displayCardBack(pictureBoxPlayerHand2);
-            displayCardBack(pictureBoxHit);
+            displayCardBack(pictureBoxPlayer1Hand1);
+            displayCardBack(pictureBoxPlayer1Hand2);
+            displayCardBack(pictureBoxPlayer2Hand1);
+            displayCardBack(pictureBoxPlayer2Hand2);
+            displayCardBack(pictureBoxPlayer1Hit);
+            displayCardBack(pictureBoxPlayer2Hit);
             displayCardBack(pictureBoxDealerHand1);
             displayCardBack(pictureBoxDealerHand2);
             displayCardBack(pictureBoxDealerHit);
             player1.cardList.Clear();
             dealer.cardList.Clear();
             usedCards.Clear();
-            hitButton.Enabled = false;
-            standButton.Enabled = false;
+            hitButtonPlayer1.Enabled = false;
+            standButtonPlayer1.Enabled = false;
             dealButton.Enabled = true;
             resultLabel.Text = "Click Deal when ready";
         }
@@ -234,28 +250,51 @@ namespace Blackjack_threading
         }
 
         // Deals a hand to the player
-        private void DealPlayer()
+        private void DealPlayers()
         {
-            // PLAYER IS DEALT 2 CARDS, BOTH FACE UP
-            displayCardBack(pictureBoxHit);
-            // draw random card 1
+            // hit cards face down
+            displayCardBack(pictureBoxPlayer1Hit);
+            displayCardBack(pictureBoxPlayer2Hit);
+            
+            // draw player 1 random card 1
             int randomCard1 = selectRandomCard();
             Card card1 = deck[randomCard1];
             // save random card 1 in used cards
             usedCards.Add(randomCard1);
-            // draw random card 2
+            
+            // draw player 1 random card 2
             int randomCard2 = selectRandomCard();
             if (randomCard1 == randomCard2) selectRandomCard();
             else randomCard2 = 1 * randomCard2;
-            // save random card 1 in used cards
+            // save random card 2 in used cards
             Card card2 = deck[randomCard2];
             usedCards.Add(randomCard2);
+
+            // draw player 2 random card 1
+            int randomCard3 = selectRandomCard();
+            Card card3 = deck[randomCard3];
+            // save random card 1 in used cards
+            usedCards.Add(randomCard3);
+
+            // draw player 2 random card 2
+            int randomCard4 = selectRandomCard();
+            if (randomCard3 == randomCard4) selectRandomCard();
+            else randomCard4 = 1 * randomCard4;
+            // save random card 2 in used cards
+            Card card4 = deck[randomCard4];
+            usedCards.Add(randomCard4);
+
             // add cards to cardlist
             player1.cardList.Add(card1);
             player1.cardList.Add(card2);
+            player2.cardList.Add(card3);
+            player2.cardList.Add(card4);
+
             // show cards
-            pictureBoxPlayerHand1.ImageLocation = card1.Image;
-            pictureBoxPlayerHand2.ImageLocation = card2.Image;
+            pictureBoxPlayer1Hand1.ImageLocation = card1.Image;
+            pictureBoxPlayer1Hand2.ImageLocation = card2.Image;
+            pictureBoxPlayer2Hand1.ImageLocation = card3.Image;
+            pictureBoxPlayer2Hand2.ImageLocation = card4.Image;
         }
 
         // function for selecting random card
