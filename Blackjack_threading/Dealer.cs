@@ -18,10 +18,10 @@ namespace Blackjack_threading
             deck.Shuffle();
         }
 
-        public void Deal(List<Card> deck, Participents player)
+        public void Deal(List<Card> deck, Participents participant)
         {
             Card card = deck[0];
-            player.cardList.Add(card);
+            participant.cardList.Add(card);
             deck.RemoveAt(0);
         }
     }

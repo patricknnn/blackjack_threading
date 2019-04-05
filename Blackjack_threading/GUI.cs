@@ -50,7 +50,7 @@ namespace Blackjack_threading
             //Hit method
         }
 
-        // Handles stand button click
+        // Handles stand button click for player 1
         private void StandButton_Click(object sender, EventArgs e)
         {
             //Stand method
