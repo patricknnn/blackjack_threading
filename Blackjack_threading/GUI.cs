@@ -24,6 +24,7 @@ namespace Blackjack_threading
 
         public void DrawResetGame()
         {
+            dealButton.Invoke(new Action(delegate () { dealButton.Enabled = true; }));
             hitButtonPlayer1.Invoke(new Action(delegate () { hitButtonPlayer1.Enabled = false; }));
             hitButtonPlayer2.Invoke(new Action(delegate () { hitButtonPlayer2.Enabled = false; }));
             standButtonPlayer1.Invoke(new Action(delegate () { standButtonPlayer1.Enabled = false; }));
@@ -39,7 +40,27 @@ namespace Blackjack_threading
             standButtonPlayer1.Invoke(new Action(delegate () { standButtonPlayer1.Enabled = true; }));
             standButtonPlayer2.Invoke(new Action(delegate () { standButtonPlayer2.Enabled = false; }));
             resetButton.Invoke(new Action(delegate () { resetButton.Enabled = true; }));
-            resultLabel.Invoke(new Action(delegate () { resultLabel.Text = "Game started"; }));
+            resultLabel.Invoke(new Action(delegate () { resultLabel.Text = "Player 1 is playing"; }));
+        }
+
+        public void DrawPlayer2Turn()
+        {
+            hitButtonPlayer1.Invoke(new Action(delegate () { hitButtonPlayer1.Enabled = false; }));
+            hitButtonPlayer2.Invoke(new Action(delegate () { hitButtonPlayer2.Enabled = true; }));
+            standButtonPlayer1.Invoke(new Action(delegate () { standButtonPlayer1.Enabled = false; }));
+            standButtonPlayer2.Invoke(new Action(delegate () { standButtonPlayer2.Enabled = true; }));
+            resetButton.Invoke(new Action(delegate () { resetButton.Enabled = true; }));
+            resultLabel.Invoke(new Action(delegate () { resultLabel.Text = "Player 2 is playing"; }));
+        }
+
+        public void DrawEndGame()
+        {
+            dealButton.Invoke(new Action(delegate () { dealButton.Enabled = false; }));
+            resetButton.Invoke(new Action(delegate () { resetButton.Enabled = true; }));
+            hitButtonPlayer1.Invoke(new Action(delegate () { hitButtonPlayer1.Enabled = false; }));
+            hitButtonPlayer2.Invoke(new Action(delegate () { hitButtonPlayer2.Enabled = false; }));
+            standButtonPlayer1.Invoke(new Action(delegate () { standButtonPlayer1.Enabled = false; }));
+            standButtonPlayer2.Invoke(new Action(delegate () { standButtonPlayer2.Enabled = false; }));
         }
 
         // Handles deal button click
@@ -47,8 +68,11 @@ namespace Blackjack_threading
         {
             // Change Game State
             Engine.State = Enums.GameStates.StartGame;
+            // Disable deal button
+            dealButton.Invoke(new Action(delegate () { dealButton.Enabled = false; }));
             // Update card count
             cardCountPlayer1.Invoke(new Action(delegate () { cardCountPlayer1.Text = String.Format("Cardcount: {0}", engine.GetCardCount("player1").ToString()); }));
+            cardCountPlayer2.Invoke(new Action(delegate () { cardCountPlayer2.Text = String.Format("Cardcount: {0}", engine.GetCardCount("player2").ToString()); }));
         }
 
         // handles hit button click for player 1
@@ -67,19 +91,36 @@ namespace Blackjack_threading
         // handles hitbutton click for player 2
         private void HitButtonPlayer2_Click(object sender, EventArgs e)
         {
-            //Hit method
+            // Draw card
+            engine.DrawCard("player2");
+
+            // Update card count
+            cardCountPlayer2.Invoke(new Action(delegate () { cardCountPlayer2.Text = String.Format("Cardcount: {0}", engine.GetCardCount("player2").ToString()); }));
+
+            // Change gamestate
+            Engine.State = Enums.GameStates.UpdateGame;
         }
 
         // Handles stand button click for player 1
         private void StandButton_Click(object sender, EventArgs e)
         {
             //Stand method
+            DrawPlayer2Turn();
         }
 
         // handles stand button for player 2
         private void StandButtonPlayer2_Click(object sender, EventArgs e)
         {
             //Stand method
+            hitButtonPlayer2.Invoke(new Action(delegate () { hitButtonPlayer2.Enabled = false; }));
+            standButtonPlayer2.Invoke(new Action(delegate () { standButtonPlayer2.Enabled = false; }));
+            
+            //
+            // TODO
+            //
+            // Method for dealer draw
+            // Determine winner
+            
         }
 
         internal void Result()
@@ -96,6 +137,7 @@ namespace Blackjack_threading
             RemoveControls(this, typeof(PictureBox));
             // Set card count to 0
             cardCountPlayer1.Invoke(new Action(delegate () { cardCountPlayer1.Text = "Cardcount: 0"; }));
+            cardCountPlayer2.Invoke(new Action(delegate () { cardCountPlayer2.Text = "Cardcount: 0"; }));
         }
 
         // Function to clear controls from canvas
@@ -158,15 +200,39 @@ namespace Blackjack_threading
             if (player.Name == "player1")
             {
                 cardCountPlayer1.Invoke(new Action(delegate () { cardCountPlayer1.Text = "BUSTED!"; }));
-                hitButtonPlayer1.Invoke(new Action(delegate () { hitButtonPlayer1.Enabled = false; }));
-                standButtonPlayer1.Invoke(new Action(delegate () { standButtonPlayer1.Enabled = false; }));
+                DrawPlayer2Turn();
             }
-            else
+            else if (player.Name == "player2")
             {
                 cardCountPlayer2.Invoke(new Action(delegate () { cardCountPlayer2.Text = "BUSTED!"; }));
                 hitButtonPlayer2.Invoke(new Action(delegate () { hitButtonPlayer2.Enabled = false; }));
                 standButtonPlayer2.Invoke(new Action(delegate () { standButtonPlayer2.Enabled = false; }));
             }
+            else
+            {
+                // dealer busted
+            }
+        }
+
+        public void IsWinner(Participents player)
+        {
+            // player won the game
+            if (player.Name == "player1")
+            {
+                cardCountPlayer1.Invoke(new Action(delegate () { cardCountPlayer1.Text = "THIS HAND WON THE GAME!"; }));
+                resultLabel.Invoke(new Action(delegate () { resultLabel.Text = "PLAYER 1 WON THE GAME!"; }));
+            }
+            else if(player.Name == "player2")
+            {
+                cardCountPlayer2.Invoke(new Action(delegate () { cardCountPlayer2.Text = "THIS HAND WON THE GAME!"; }));
+                resultLabel.Invoke(new Action(delegate () { resultLabel.Text = "PLAYER 2 WON THE GAME!"; }));
+            }
+            else
+            {
+                // dealer won
+                resultLabel.Invoke(new Action(delegate () { resultLabel.Text = "DEALER WON THE GAME!"; }));
+            }
+            DrawEndGame();
         }
     }
 }

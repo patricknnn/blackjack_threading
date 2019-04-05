@@ -68,11 +68,26 @@ namespace Blackjack_threading
                 dealer.Deal(deck, players[1]);
                 dealer.Deal(deck, players[1]);
             }
+
+            // UPDATE GAME
+            if (State == Enums.GameStates.UpdateGame)
+            {
+                CheckForBust();
+                CheckForBlackjack();
+            }
+
+            if (State == Enums.GameStates.StartGame)
+            {
+                CheckForBust();
+                CheckForBlackjack();
+            }
+
         }
 
 
         public void Render()
         {
+            // NEW GAME
             if (State == Enums.GameStates.ResetGame)
             {
                 gui.DrawResetGame();
@@ -101,6 +116,7 @@ namespace Blackjack_threading
                 State = Enums.GameStates.Wait;
             }
 
+            // UPDATE GAME
             if (State == Enums.GameStates.UpdateGame)
             {
                 // draw hit cards if any for players
@@ -124,15 +140,6 @@ namespace Blackjack_threading
                     }
                 }
 
-                // check values of all hands for bust
-                foreach (Participents player in players)
-                {
-                    if (player.SumCards() > 21)
-                    {
-                        gui.BustPlayer(player);
-                    }
-                }
-
                 // wait
                 State = Enums.GameStates.Wait;
             }
@@ -144,6 +151,103 @@ namespace Blackjack_threading
             players[0].cardList.Clear();
             players[1].cardList.Clear();
             dealer.cardList.Clear();
+        }
+
+        private void DetermineWinner()
+        {
+            int dealerScore = dealer.SumCards();
+            int player1score = players[0].SumCards();
+            int player2score = players[1].SumCards();
+
+            // if both players dead, dealer wins
+            if (player1score > 21 && player2score > 21 && dealerScore < 21)
+            {
+                gui.IsWinner(dealer);
+            }
+            // dealer dead
+            if (dealerScore > 21 && player2score < 21 && player1score < 21)
+            {
+                if (player1score > player2score)
+                {
+                    gui.IsWinner(players[0]);
+                }
+                else
+                {
+                    gui.IsWinner(players[1]);
+                }
+            }
+            // all below 21, highest wins
+            if (player1score < 21 && player2score < 21 && dealerScore < 21)
+            {
+                if (player1score > player2score && player1score > dealerScore)
+                {
+                    gui.IsWinner(players[0]);
+                }
+                else if (player2score > player1score && player2score > dealerScore)
+                {
+                    gui.IsWinner(players[1]);
+                }
+                else
+                {
+                    gui.IsWinner(dealer);
+                }
+            }
+            // player 1 dead, 2 is not
+            if (dealerScore < 21 && player1score > 21 && player2score < 21)
+            {
+                if (dealerScore > player2score)
+                {
+                    gui.IsWinner(dealer);
+                }
+                else
+                {
+                    gui.IsWinner(players[1]);
+                }
+            }
+            // player 2 dead, 1 is not
+            if (dealerScore < 21 && player2score > 21 && player1score < 21)
+            {
+                if (dealerScore > player1score)
+                {
+                    gui.IsWinner(dealer);
+                }
+                else
+                {
+                    gui.IsWinner(players[0]);
+                }
+            }
+        }
+
+        private void CheckForBust()
+        {
+            // check values of all hands for bust
+            foreach (Participents player in players)
+            {
+                if (player.SumCards() > 21)
+                {
+                    gui.BustPlayer(player);
+                }
+            }
+            if (dealer.SumCards() > 21)
+            {
+                gui.BustPlayer(dealer);
+            }
+        }
+
+        private void CheckForBlackjack()
+        {
+            // check values of all hands for blackjack
+            foreach (Participents player in players)
+            {
+                if (player.SumCards() == 21)
+                {
+                    gui.IsWinner(player);
+                }
+            }
+            if (dealer.SumCards() == 21)
+            {
+                gui.IsWinner(dealer);
+            }
         }
 
         // Draws card for given player
