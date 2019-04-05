@@ -1,14 +1,9 @@
 ﻿using Blackjack_threading;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Drawing;
 
 namespace Blackjack
 {
-    class Deck
+    public class Deck
     {
         // Deck class generates 52 card deck
         public static List<Card> GenerateDeck()

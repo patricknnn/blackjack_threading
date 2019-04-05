@@ -1,32 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Drawing;
 
 namespace Blackjack_threading
 {
-    class Dealer
+    public class Dealer : Participents
     {
-        // Dealer class holds information of dealer.
-        private int cardSum;
+        public string Cardback { get; }
 
-        // Create cardlist for dealer
-        public List<Card> cardList = new List<Card>()
-        {
-            new Card() { Value  = 0, Name = "null", Image = null }
-        };
 
-        // method for returning sum of cards in cardlist
-        public int sumCards()
+        public Dealer(int X, int Y) : base( X,  Y)
         {
-            cardSum = 0;
-            for (int i = 0; i < cardList.Count; i++)
-            {
-                cardSum += cardList[i].Value;
-            }
-            return cardSum;
+            Cardback = @"CardImages/red_back.png";
+        }
+
+        public void Shuffle(List<Card> deck)
+        {
+            deck.Shuffle();
+        }
+
+        public void Deal(List<Card> deck, Participents player)
+        {
+            Card card = deck[0];
+            player.cardList.Add(card);
+            deck.RemoveAt(0);
         }
     }
 }

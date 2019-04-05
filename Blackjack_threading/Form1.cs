@@ -1,44 +1,168 @@
 ﻿using Blackjack;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Windows.Forms;
-using System.IO;
-using System.Reflection;
 
 namespace Blackjack_threading
 {
     public partial class Form1 : Form
     {
+        private Enums.GameStates state = Enums.GameStates.ResetGame;
+        private Enums.Turn turn = Enums.Turn.Player1;
+
         // Create a player and a dealer instance
-        Dealer dealer = new Dealer();
-        Player player1 = new Player() { Name = "Player 1" };
-        Player player2 = new Player() { Name = "Player 2" };
-        
+        private Dealer dealer = new Dealer();
+        private Player player1 = new Player() { Name = "Player 1" };
+        private Player player2 = new Player() { Name = "Player 2" };
+
         // Create new random
-        Random random = new Random();
-        
+        private Random random = new Random();
+
         // generated list for used cards to they are not used twice
-        List<int> usedCards = new List<int>();
-        
+        private List<int> usedCards = new List<int>();
+
         // generate deck
-        List<Card> deck = Deck.GenerateDeck();
+        private List<Card> deck = new List<Card>();
 
         // Initialize form1
         public Form1()
         {
             InitializeComponent();
+
         }
 
-        // resetGame() on load
+
+        private void GameLoop()
+        {
+            while (true)
+            {
+                // NEW GAME
+                if (state == Enums.GameStates.ResetGame)
+                {
+                    // reset game
+                    ResetGame();
+
+                    // generate deck
+                    deck = Deck.GenerateDeck();
+                    dealer.Shuffle(deck);
+
+                    dealer.Deal(deck, dealer);
+                    dealer.Deal(deck, dealer);
+                    dealer.Deal(deck, player1);
+                    dealer.Deal(deck, player1);
+                    dealer.Deal(deck, player2);
+                    dealer.Deal(deck, player2);
+
+                    
+                    // when done, chage state to start
+                    state = Enums.GameStates.StartGame;
+                }
+
+                // START GAME
+                if (turn == Enums.Turn.Dealer)
+                {
+                    //// Deal dealer
+                    //DealDealer();
+                    //// Deal player
+                    //DealPlayers();
+                    state = Enums.GameStates.Wait;
+                }
+            }
+        }
+
+
+        private void RenderLoop()
+        {
+            while (true)
+            {
+                if (state == Enums.GameStates.ResetGame)
+                {
+                    DrawResetGame();
+                }
+
+                if (state == Enums.GameStates.RestartGame)
+                {
+                    resultLabel.Invoke(new Action(delegate () { resultLabel.Text = "Game is over, reset to restart!"; }));
+                }
+
+                if(state == Enums.GameStates.StartGame)
+                {
+                    RenderCard(null, pictureBoxDealerHand1);
+                    RenderCard(dealer.cardList[dealer.cardList.Count - 1], pictureBoxDealerHand2);
+                    RenderCard(player1.cardList[player1.cardList.Count - 2], pictureBoxPlayer1Hand1);
+                    RenderCard(player1.cardList[player1.cardList.Count - 1], pictureBoxPlayer1Hand2);
+                    RenderCard(player2.cardList[player2.cardList.Count - 2], pictureBoxPlayer2Hand1);
+                    RenderCard(player2.cardList[player2.cardList.Count - 1], pictureBoxPlayer2Hand2);
+
+                    state = Enums.GameStates.Wait;
+                }
+
+                //if(state == Enums.GameStates.Start)
+                //{
+                //    // check dealer cards for dead or Blackjack
+                //    if (dealer.sumCards() > 21)
+                //    {
+                //        resultLabel.Text = String.Format("The sum of the dealers cards is: {0}, Dealer dead! You win! Click Reset", dealer.sumCards());
+                //    }
+                //    else if (dealer.sumCards() == 21)
+                //    {
+                //        resultLabel.Text = String.Format("Blackjack!, Dealer wins!");
+                //    }
+                //    else
+                //    {
+                //        // dealer no blackjack or dead so continue
+                //        // check player cards for dead or blackjack
+                //        if (player1.sumCards() > 21)
+                //        {
+                //            resultLabel.Text = String.Format("The sum of {0} cards is: {1}, you lose! Click Reset", player1.Name, player1.sumCards());
+                //        }
+                //        else if (player1.sumCards() == 21)
+                //        {
+                //            resultLabel.Text = String.Format("Blackjack!, {0} wins!", player1.Name);
+                //        }
+                //        else
+                //        {
+                //            resultLabel.Text = String.Format("The sum of {0} cards is: {1}", player1.Name, player1.sumCards());
+                //        }
+                //    }
+                //}
+            }
+        }
+
+        // resets the game
+
+        private void ResetGame()
+        {
+            player1.cardList.Clear();
+            player2.cardList.Clear();
+            dealer.cardList.Clear();
+        }
+
+        private void DrawResetGame()
+        {
+            hitButtonPlayer1.Invoke(new Action(delegate () { hitButtonPlayer1.Enabled = false; }));
+            hitButtonPlayer2.Invoke(new Action(delegate () { hitButtonPlayer2.Enabled = false; }));
+            standButtonPlayer1.Invoke(new Action(delegate () { standButtonPlayer1.Enabled = false; }));
+            standButtonPlayer2.Invoke(new Action(delegate () { standButtonPlayer2.Enabled = false; }));
+            dealButton.Invoke(new Action(delegate () { dealButton.Enabled = false; }));
+            resultLabel.Invoke(new Action(delegate () { resultLabel.Text = "Click Deal when ready"; }));
+        }
+
+        // onLoad change state to newGame
         private void Form1_Load(object sender, EventArgs e)
         {
-            resetGame();
+            // Create a thread object, passing in the GameLoop method
+            var gameThread = new Thread(GameLoop);
+
+            // Start the game thread
+            gameThread.Start();
+
+            // Create a thread object, passing in the GameLoop method
+            var renderThread = new Thread(RenderLoop);
+
+            // Start the render thread
+            renderThread.Start();
         }
 
         // Handles deal button click
@@ -46,12 +170,13 @@ namespace Blackjack_threading
         {
             dealButton.Enabled = false;
             hitButtonPlayer1.Enabled = true;
+            hitButtonPlayer2.Enabled = false;
             standButtonPlayer1.Enabled = true;
-            if (player1.sumCards() > 0)
+            standButtonPlayer2.Enabled = false;
+            if (player1.SumCards() > 0)
             {
                 resultLabel.Text = String.Format("Click Reset if you want to restart.");
             }
-
             else
             {
                 // Deal dealer
@@ -59,11 +184,11 @@ namespace Blackjack_threading
                 // Deal player
                 DealPlayers();
                 // check dealer cards for dead or Blackjack
-                if (dealer.sumCards() > 21)
+                if (dealer.SumCards() > 21)
                 {
-                    resultLabel.Text = String.Format("The sum of the dealers cards is: {0}, Dealer dead! You win! Click Reset", dealer.sumCards());
+                    resultLabel.Text = String.Format("The sum of the dealers cards is: {0}, Dealer dead! You win! Click Reset", dealer.SumCards());
                 }
-                else if (dealer.sumCards() == 21)
+                else if (dealer.SumCards() == 21)
                 {
                     resultLabel.Text = String.Format("Blackjack!, Dealer wins!");
                 }
@@ -71,17 +196,17 @@ namespace Blackjack_threading
                 {
                     // dealer no blackjack or dead so continue
                     // check player cards for dead or blackjack
-                    if (player1.sumCards() > 21)
+                    if (player1.SumCards() > 21)
                     {
-                        resultLabel.Text = String.Format("The sum of {0} cards is: {1}, you lose! Click Reset", player1.Name, player1.sumCards());
+                        resultLabel.Text = String.Format("The sum of {0} cards is: {1}, you lose! Click Reset", player1.Name, player1.SumCards());
                     }
-                    else if (player1.sumCards() == 21)
+                    else if (player1.SumCards() == 21)
                     {
                         resultLabel.Text = String.Format("Blackjack!, {0} wins!", player1.Name);
                     }
                     else
                     {
-                        resultLabel.Text = String.Format("The sum of {0} cards is: {1}", player1.Name, player1.sumCards());
+                        resultLabel.Text = String.Format("The sum of {0} cards is: {1}", player1.Name, player1.SumCards());
                     }
                 }
             }
@@ -90,21 +215,17 @@ namespace Blackjack_threading
         // handles hit button click for player 1
         private void hitButton_Click(object sender, EventArgs e)
         {
-            if (player1.sumCards() == 0)
+            if (player1.SumCards() == 0)
             {
                 resultLabel.Text = "You need to deal first!";
-                displayCardBack(pictureBoxPlayer1Hit);
+                RenderCard(null, pictureBoxPlayer1Hit);
             }
             // player sumcards is not 0, so continue
             else
             {
-                if (player1.sumCards() > 21)
+                if (player1.SumCards() >= 21 || dealer.SumCards() >= 21)
                 {
-                    resultLabel.Text = "Game is over, reset to restart!";
-                }
-                else if (player1.sumCards() == 21 || dealer.sumCards() == 21)
-                {
-                    resultLabel.Text = "Game is over, reset to restart!";
+                    state = Enums.GameStates.RestartGame;
                 }
                 else
                 {
@@ -117,17 +238,17 @@ namespace Blackjack_threading
 
                     pictureBoxPlayer1Hit.ImageLocation = card.Image;
                     player1.cardList.Add(card);
-                    if (player1.sumCards() > 21)
+                    if (player1.SumCards() > 21)
                     {
-                        resultLabel.Text = String.Format("The sum of {0} cards is: {1}, you lose! Click Reset", player1.Name, player1.sumCards());
+                        resultLabel.Text = String.Format("The sum of {0} cards is: {1}, you lose! Click Reset", player1.Name, player1.SumCards());
                     }
-                    else if (player1.sumCards() == 21)
+                    else if (player1.SumCards() == 21)
                     {
                         resultLabel.Text = String.Format("BlackJack!, you win!");
                     }
                     else
                     {
-                        resultLabel.Text = String.Format("The sum of {0} cards is: {1}", player1.Name, player1.sumCards());
+                        resultLabel.Text = String.Format("The sum of {0} cards is: {1}", player1.Name, player1.SumCards());
                     }
                 }
             }
@@ -145,14 +266,14 @@ namespace Blackjack_threading
             hitButtonPlayer1.Enabled = false;
             standButtonPlayer1.Enabled = false;
             dealButton.Enabled = false;
-            if (player1.sumCards() == 0)
+            if (player1.SumCards() == 0)
             {
                 resultLabel.Text = "Click the Deal button...";
-                displayCardBack(pictureBoxPlayer1Hit);
+                RenderCard(null, pictureBoxPlayer1Hit);
             }
             else
             {
-                if (player1.sumCards() > 21)
+                if (player1.SumCards() > 21)
                 {
                     resultLabel.Text = "You lost.";
                 }
@@ -161,7 +282,7 @@ namespace Blackjack_threading
                     // player stands with cards so dealers turn to beat his hand
                     Card dealercard1 = dealer.cardList[0];
                     pictureBoxDealerHand1.ImageLocation = dealercard1.Image;
-                    while (dealer.sumCards() < player1.sumCards())
+                    while (dealer.SumCards() < player1.SumCards())
                     {
                         // dealer draws card
                         int randomDealerCard = selectRandomCard();
@@ -171,21 +292,21 @@ namespace Blackjack_threading
                         // dealer card is shown
                         pictureBoxDealerHit.ImageLocation = dealerCard.Image;
                     }
-                    if (dealer.sumCards() == player1.sumCards())
+                    if (dealer.SumCards() == player1.SumCards())
                     {
-                        resultLabel.Text = String.Format("The sum of dealer cards is: {0}, it's a tie!", dealer.sumCards());
+                        resultLabel.Text = String.Format("The sum of dealer cards is: {0}, it's a tie!", dealer.SumCards());
                     }
-                    else if (dealer.sumCards() > 21)
+                    else if (dealer.SumCards() > 21)
                     {
-                        resultLabel.Text = String.Format("The sum of dealer cards is: {0}, dealer lost! You win! Click Reset", dealer.sumCards());
+                        resultLabel.Text = String.Format("The sum of dealer cards is: {0}, dealer lost! You win! Click Reset", dealer.SumCards());
                     }
-                    else if (dealer.sumCards() == 21)
+                    else if (dealer.SumCards() == 21)
                     {
                         resultLabel.Text = String.Format("BlackJack!, dealer wins!");
                     }
-                    else if (dealer.sumCards() > player1.sumCards() && dealer.sumCards() < 21)
+                    else if (dealer.SumCards() > player1.SumCards() && dealer.SumCards() < 21)
                     {
-                        resultLabel.Text = String.Format("The sum of dealer cards is: {0}, dealer wins!", dealer.sumCards());
+                        resultLabel.Text = String.Format("The sum of dealer cards is: {0}, dealer wins!", dealer.SumCards());
                     }
                 }
             }
@@ -200,36 +321,17 @@ namespace Blackjack_threading
         // handles reset button
         private void resetButton_Click(object sender, EventArgs e)
         {
-            resetGame();
+            state = Enums.GameStates.ResetGame;
         }
 
-        // resets the game
-        private void resetGame()
+        private void DealCard()
         {
-            resultLabel.Text = null;
-            displayCardBack(pictureBoxPlayer1Hand1);
-            displayCardBack(pictureBoxPlayer1Hand2);
-            displayCardBack(pictureBoxPlayer2Hand1);
-            displayCardBack(pictureBoxPlayer2Hand2);
-            displayCardBack(pictureBoxPlayer1Hit);
-            displayCardBack(pictureBoxPlayer2Hit);
-            displayCardBack(pictureBoxDealerHand1);
-            displayCardBack(pictureBoxDealerHand2);
-            displayCardBack(pictureBoxDealerHit);
-            player1.cardList.Clear();
-            dealer.cardList.Clear();
-            usedCards.Clear();
-            hitButtonPlayer1.Enabled = false;
-            standButtonPlayer1.Enabled = false;
-            dealButton.Enabled = true;
-            resultLabel.Text = "Click Deal when ready";
+
         }
 
         // Deals a hand to the dealer
         private void DealDealer()
         {
-            //DEALER DRAWS 2 CARD, 1 FACED DOWN AND 1 FACED UP
-            displayCardBack(pictureBoxDealerHit);
             // draw dealer card 1
             int randomDealerCard1 = selectRandomCard();
             Card dealerCard1 = deck[randomDealerCard1];
@@ -243,25 +345,43 @@ namespace Blackjack_threading
             // add cards to cardlist of dealer
             dealer.cardList.Add(dealerCard1);
             dealer.cardList.Add(dealerCard2);
+
+
             // first dealer card is not shown
-            displayCardBack(pictureBoxDealerHand1);
+            RenderCard(null, pictureBoxDealerHand1);
+            // render cards
+            //RenderCard(dealerCard1, pictureBoxDealerHand1);
+            RenderCard(dealerCard2, pictureBoxDealerHand2);
             // second dealer card is shown
-            pictureBoxDealerHand2.ImageLocation = dealerCard2.Image;
+            RenderCard(null, pictureBoxDealerHit);
+        }
+
+        private void RenderCard(Card card, PictureBox box)
+        {
+            if (card != null)
+            {
+                box.Invoke(new MethodInvoker(delegate () {box.ImageLocation = card.Image;}));
+            }
+            else
+            {
+                box.Invoke(new MethodInvoker(delegate () { box.ImageLocation = @"CardImages/red_back.png"; }));
+            }
+
         }
 
         // Deals a hand to the player
         private void DealPlayers()
         {
             // hit cards face down
-            displayCardBack(pictureBoxPlayer1Hit);
-            displayCardBack(pictureBoxPlayer2Hit);
-            
+            RenderCard(null, pictureBoxPlayer1Hit);
+            RenderCard(null, pictureBoxPlayer2Hit);
+
             // draw player 1 random card 1
             int randomCard1 = selectRandomCard();
             Card card1 = deck[randomCard1];
             // save random card 1 in used cards
             usedCards.Add(randomCard1);
-            
+
             // draw player 1 random card 2
             int randomCard2 = selectRandomCard();
             if (randomCard1 == randomCard2) selectRandomCard();
@@ -304,14 +424,5 @@ namespace Blackjack_threading
             randomCard = random.Next(0, deck.Count);
             return randomCard;
         }
-
-        // function to display back of card
-        private void displayCardBack(PictureBox picturebox)
-        {
-            picturebox.ImageLocation = @"CardImages/red_back.png";
-            picturebox.SizeMode = PictureBoxSizeMode.StretchImage;
-        }
-
-        
     }
 }
