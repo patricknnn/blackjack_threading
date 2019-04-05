@@ -141,8 +141,10 @@ namespace Blackjack_threading
                     }
                 }
 
-                
-
+                if (players[1].SumCards() > 21)
+                {
+                    State = Enums.GameStates.EndGame;
+                }
                 // wait
                 State = Enums.GameStates.Wait;
             }
