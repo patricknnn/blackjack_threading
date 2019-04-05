@@ -9,6 +9,7 @@
             StartGame,
             RestartGame,
             UpdateGame,
+            EndGame,
             Wait,
             Load
         }

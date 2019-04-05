@@ -41,6 +41,7 @@
             this.hitButtonPlayer2 = new System.Windows.Forms.Button();
             this.cardCountPlayer1 = new System.Windows.Forms.Label();
             this.cardCountPlayer2 = new System.Windows.Forms.Label();
+            this.cardCountDealer = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // dealButton
@@ -175,6 +176,15 @@
             this.cardCountPlayer2.TabIndex = 21;
             this.cardCountPlayer2.Text = "Card Count:";
             // 
+            // cardCountDealer
+            // 
+            this.cardCountDealer.AutoSize = true;
+            this.cardCountDealer.Location = new System.Drawing.Point(473, 163);
+            this.cardCountDealer.Name = "cardCountDealer";
+            this.cardCountDealer.Size = new System.Drawing.Size(63, 13);
+            this.cardCountDealer.TabIndex = 22;
+            this.cardCountDealer.Text = "Card Count:";
+            // 
             // GUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -182,6 +192,7 @@
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(1052, 549);
+            this.Controls.Add(this.cardCountDealer);
             this.Controls.Add(this.cardCountPlayer2);
             this.Controls.Add(this.cardCountPlayer1);
             this.Controls.Add(this.standButtonPlayer2);
@@ -216,6 +227,7 @@
         private System.Windows.Forms.Button hitButtonPlayer2;
         private System.Windows.Forms.Label cardCountPlayer1;
         private System.Windows.Forms.Label cardCountPlayer2;
+        private System.Windows.Forms.Label cardCountDealer;
     }
 }
 

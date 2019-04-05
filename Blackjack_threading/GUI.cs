@@ -73,6 +73,7 @@ namespace Blackjack_threading
             // Update card count
             cardCountPlayer1.Invoke(new Action(delegate () { cardCountPlayer1.Text = String.Format("Cardcount: {0}", engine.GetCardCount("player1").ToString()); }));
             cardCountPlayer2.Invoke(new Action(delegate () { cardCountPlayer2.Text = String.Format("Cardcount: {0}", engine.GetCardCount("player2").ToString()); }));
+            cardCountDealer.Invoke(new Action(delegate () { cardCountDealer.Text = String.Format("Cardcount: {0}", engine.GetCardCount("dealer").ToString()); }));
         }
 
         // handles hit button click for player 1
@@ -115,12 +116,8 @@ namespace Blackjack_threading
             hitButtonPlayer2.Invoke(new Action(delegate () { hitButtonPlayer2.Enabled = false; }));
             standButtonPlayer2.Invoke(new Action(delegate () { standButtonPlayer2.Enabled = false; }));
             
-            //
-            // TODO
-            //
-            // Method for dealer draw
-            // Determine winner
-            
+            // Change Game State
+            Engine.State = Enums.GameStates.EndGame;
         }
 
         internal void Result()
@@ -138,6 +135,7 @@ namespace Blackjack_threading
             // Set card count to 0
             cardCountPlayer1.Invoke(new Action(delegate () { cardCountPlayer1.Text = "Cardcount: 0"; }));
             cardCountPlayer2.Invoke(new Action(delegate () { cardCountPlayer2.Text = "Cardcount: 0"; }));
+            cardCountDealer.Invoke(new Action(delegate () { cardCountDealer.Text = "Cardcount: 0"; }));
         }
 
         // Function to clear controls from canvas
@@ -207,10 +205,13 @@ namespace Blackjack_threading
                 cardCountPlayer2.Invoke(new Action(delegate () { cardCountPlayer2.Text = "BUSTED!"; }));
                 hitButtonPlayer2.Invoke(new Action(delegate () { hitButtonPlayer2.Enabled = false; }));
                 standButtonPlayer2.Invoke(new Action(delegate () { standButtonPlayer2.Enabled = false; }));
+                // Change Game State
+                Engine.State = Enums.GameStates.EndGame;
             }
             else
             {
                 // dealer busted
+                cardCountDealer.Invoke(new Action(delegate () { cardCountDealer.Text = "BUSTED!"; }));
             }
         }
 
@@ -219,17 +220,18 @@ namespace Blackjack_threading
             // player won the game
             if (player.Name == "player1")
             {
-                cardCountPlayer1.Invoke(new Action(delegate () { cardCountPlayer1.Text = "THIS HAND WON THE GAME!"; }));
+                cardCountPlayer1.Invoke(new Action(delegate () { cardCountPlayer1.Text = String.Format("Cardcount: {0}", engine.GetCardCount("player1").ToString()); }));
                 resultLabel.Invoke(new Action(delegate () { resultLabel.Text = "PLAYER 1 WON THE GAME!"; }));
             }
             else if(player.Name == "player2")
             {
-                cardCountPlayer2.Invoke(new Action(delegate () { cardCountPlayer2.Text = "THIS HAND WON THE GAME!"; }));
+                cardCountPlayer2.Invoke(new Action(delegate () { cardCountPlayer2.Text = String.Format("Cardcount: {0}", engine.GetCardCount("player2").ToString()); }));
                 resultLabel.Invoke(new Action(delegate () { resultLabel.Text = "PLAYER 2 WON THE GAME!"; }));
             }
             else
             {
                 // dealer won
+                cardCountDealer.Invoke(new Action(delegate () { cardCountDealer.Text = String.Format("Cardcount: {0}", engine.GetCardCount("dealer").ToString()); }));
                 resultLabel.Invoke(new Action(delegate () { resultLabel.Text = "DEALER WON THE GAME!"; }));
             }
             DrawEndGame();

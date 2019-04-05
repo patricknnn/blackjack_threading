@@ -76,10 +76,18 @@ namespace Blackjack_threading
                 CheckForBlackjack();
             }
 
+            // UPDATE GAME
             if (State == Enums.GameStates.StartGame)
             {
                 CheckForBust();
                 CheckForBlackjack();
+            }
+
+            // END GAME
+            if (State == Enums.GameStates.EndGame)
+            {
+                DealerDraws();
+                DetermineWinner();
             }
 
         }
@@ -94,11 +102,13 @@ namespace Blackjack_threading
                 State = Enums.GameStates.Wait;
             }
 
+            // RESTART GAME
             if (State == Enums.GameStates.RestartGame)
             {
                 gui.Result();
             }
 
+            // START GAME
             if (State == Enums.GameStates.StartGame)
             {
                 gui.DrawStartGame();
@@ -131,6 +141,21 @@ namespace Blackjack_threading
                     }
                 }
 
+                
+
+                // wait
+                State = Enums.GameStates.Wait;
+            }
+
+            // END GAME
+            if (State == Enums.GameStates.EndGame)
+            {
+                // Dealer 1st card is shown
+                gui.InvokeRenderCard(dealer.CardX, dealer.CardY, dealer.cardList[0].Image);
+
+                // Dealer draws
+                DealerDraws();
+                
                 // draw hit cards if any for dealer
                 if (dealer.cardList.Count > 2)
                 {
@@ -140,9 +165,13 @@ namespace Blackjack_threading
                     }
                 }
 
+                // Determine winner
+                DetermineWinner();
+                
                 // wait
                 State = Enums.GameStates.Wait;
             }
+
         }
 
         // resets the game
@@ -151,6 +180,24 @@ namespace Blackjack_threading
             players[0].cardList.Clear();
             players[1].cardList.Clear();
             dealer.cardList.Clear();
+        }
+
+        private void DealerDraws()
+        {
+            int dealerScore = dealer.SumCards();
+            int player1score = players[0].SumCards();
+            int player2score = players[1].SumCards();
+
+            // if both players dead, dealer wins
+            if (player1score > 21 && player2score > 21 && dealerScore < 21)
+            {
+                gui.IsWinner(dealer);
+            }
+            // Dealer needs to beat players
+            if (dealer.SumCards() < player1score && player1score < 21 || dealer.SumCards() < player2score && player2score < 21)
+            {
+                dealer.Deal(deck, dealer);
+            }
         }
 
         private void DetermineWinner()
