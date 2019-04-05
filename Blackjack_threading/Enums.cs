@@ -8,6 +8,7 @@
             ResetGame,
             StartGame,
             RestartGame,
+            UpdateGame,
             Wait,
             Load
         }

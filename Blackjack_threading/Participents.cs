@@ -8,6 +8,7 @@ namespace Blackjack_threading
 {
     public abstract class Participents
     {
+        public string Name { get; set; }
         public int CardX { get; set; }
         public int CardY { get; set; }
  
