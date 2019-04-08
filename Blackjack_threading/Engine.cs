@@ -23,6 +23,8 @@ namespace Blackjack_threading
             State = Enums.GameStates.ResetGame;
             // Create a thread object, passing in the Update method
             var gameThread = new Thread(GameLoop);
+            // make it a background thread so it is ternimated at app close.
+            gameThread.IsBackground = true;
 
             // Start the game thread
             gameThread.Start();
@@ -154,6 +156,7 @@ namespace Blackjack_threading
             {
                 // Dealer 1st card is shown
                 gui.InvokeRenderCard(dealer.CardX, dealer.CardY, dealer.cardList[0].Image);
+                gui.InvokeRenderCard(dealer.CardX +30, dealer.CardY, dealer.cardList[1].Image);
 
                 // Dealer draws
                 DealerDraws();
