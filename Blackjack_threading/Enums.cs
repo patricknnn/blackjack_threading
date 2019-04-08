@@ -8,15 +8,10 @@
             ResetGame,
             StartGame,
             RestartGame,
+            UpdateGame,
+            EndGame,
             Wait,
             Load
-        }
-
-        public enum Turn
-        {
-            Player1,
-            Player2,
-            Dealer
         }
     }
 }
