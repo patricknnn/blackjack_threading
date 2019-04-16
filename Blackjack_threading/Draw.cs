@@ -6,7 +6,4 @@ using System.Threading.Tasks;
 
 namespace Blackjack_threading
 {
-    public class Draw
-    {
-    }
 }

@@ -236,5 +236,13 @@ namespace Blackjack_threading
             }
             DrawEndGame();
         }
+
+        public void IsTie()
+        {
+            // game is tied
+            cardCountDealer.Invoke(new Action(delegate () { cardCountDealer.Text = String.Format("Cardcount: {0}", engine.GetCardCount("dealer").ToString()); }));
+            resultLabel.Invoke(new Action(delegate () { resultLabel.Text = "ITS A TIE!"; }));
+            DrawEndGame();
+        }
     }
 }

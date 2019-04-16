@@ -89,6 +89,7 @@ namespace Blackjack_threading
             if (State == Enums.GameStates.EndGame)
             {
                 DealerDraws();
+                CheckForBust();
                 DetermineWinner();
             }
 
@@ -211,13 +212,19 @@ namespace Blackjack_threading
             int player1score = players[0].SumCards();
             int player2score = players[1].SumCards();
 
+            // tie
+            if (player1score == player2score || dealerScore == player1score || dealerScore == player2score)
+            {
+                gui.IsTie();
+            }
+
             // if both players dead, dealer wins
-            if (player1score > 21 && player2score > 21 && dealerScore < 21)
+            else if (player1score > 21 && player2score > 21 && dealerScore < 21)
             {
                 gui.IsWinner(dealer);
             }
             // dealer dead
-            if (dealerScore > 21 && player2score < 21 && player1score < 21)
+            else if (dealerScore > 21 && player2score < 21 && player1score < 21)
             {
                 if (player1score > player2score)
                 {
@@ -229,7 +236,7 @@ namespace Blackjack_threading
                 }
             }
             // all below 21, highest wins
-            if (player1score < 21 && player2score < 21 && dealerScore < 21)
+            else if (player1score < 21 && player2score < 21 && dealerScore < 21)
             {
                 if (player1score > player2score && player1score > dealerScore)
                 {
@@ -239,13 +246,17 @@ namespace Blackjack_threading
                 {
                     gui.IsWinner(players[1]);
                 }
-                else
+                else if (dealerScore > player1score && dealerScore > player2score)
                 {
                     gui.IsWinner(dealer);
                 }
+                else
+                {
+                    gui.IsTie();
+                }
             }
             // player 1 dead, 2 is not
-            if (dealerScore < 21 && player1score > 21 && player2score < 21)
+            else if (dealerScore < 21 && player1score > 21 && player2score < 21)
             {
                 if (dealerScore > player2score)
                 {
@@ -257,7 +268,7 @@ namespace Blackjack_threading
                 }
             }
             // player 2 dead, 1 is not
-            if (dealerScore < 21 && player2score > 21 && player1score < 21)
+            else if (dealerScore < 21 && player2score > 21 && player1score < 21)
             {
                 if (dealerScore > player1score)
                 {
